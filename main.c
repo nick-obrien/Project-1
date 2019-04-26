@@ -30,6 +30,7 @@ int main(void) {
     
     int operation, key; //declared integers for
     char message[100]; //This is the array which holds the user's message to be used in the Cipher.
+    char subkey[26] = {'Z', 'A', 'Q', 'W', 'S', 'X', 'C', 'D', 'E', 'R', 'F', 'V', 'B', 'G', 'T', 'Y', 'H', 'N', 'M', 'J', 'U', 'I', 'K', 'L', 'O', 'P'};
     
     
     printf("Please enter a string:\t"); //Ask the user for the message they wish to use.
@@ -72,7 +73,12 @@ int main(void) {
             rotationDecrypt(message, key);
             break;
             
-        case 3:
+        case 3: //Encryption with Substitution cipher
+            printf("\nEncryption with Substitution Cipher selected.\n");
+            char *esub = substitutionEncrypt(message, subkey);
+            printf("Encrypted message: %s\n", esub);
+            
+        case 5:
         /*    
         case 3: // Brute force rotation decryption
             printf("\nBrute force Decryption selected.\n");
