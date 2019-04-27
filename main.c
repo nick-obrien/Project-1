@@ -24,12 +24,20 @@ void rotationEncrypt(char* message, int key);
 void rotationDecrypt(char* message, int key);
 //Define the Brute force Decryption cipher function.
 void bruteRotation(char* message, int key);
+//Define substitution index function.
+int f_index(char subkey[], char to_find);
+//Define substitution encryption function.
+char* substitutionEncrypt(char* message, char subkey[]);
+//Define substitution decryption function.
+char* substitutionDecrypt(char* message, char subkey[]);
+
 
 //main code goes here
 int main(void) {
     
     int operation, key; //declared integers for
     char message[100]; //This is the array which holds the user's message to be used in the Cipher.
+    //Alphabet -------- A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z
     char subkey[26] = {'Z', 'A', 'Q', 'W', 'S', 'X', 'C', 'D', 'E', 'R', 'F', 'V', 'B', 'G', 'T', 'Y', 'H', 'N', 'M', 'J', 'U', 'I', 'K', 'L', 'O', 'P'};
     
     
@@ -67,6 +75,7 @@ int main(void) {
             printf("Enter the Rotation Cipher Key (0-25):\t");
             scanf("%d", &key);
             fflush(stdin);
+            
             //print the decrypted text
             printf("\nDecrypted message: ");
             
@@ -77,8 +86,15 @@ int main(void) {
             printf("\nEncryption with Substitution Cipher selected.\n");
             char *esub = substitutionEncrypt(message, subkey);
             printf("Encrypted message: %s\n", esub);
+            break;
             
-        case 5:
+        case 4: //Decryption with Substitution cipher
+            printf("\nDecryption with Substitution Cipher selected.\n");
+            char *dsub = substitutionDecrypt(message, subkey);
+            printf("Decrypted Message: %s\n", dsub);
+            break;
+            
+        //case 5:
         /*    
         case 3: // Brute force rotation decryption
             printf("\nBrute force Decryption selected.\n");
@@ -129,7 +145,7 @@ void rotationDecrypt(char* message, int key) {
     for(i = 0; message[i] != '\0'; ++i) {
 		
 		if(message[i] >= 'a' && message[i] <= 'z') {
-			message[i] = (message[i] - key) % 26 - 32; //Decrypt input message & convert any lower case characters to uppercase
+			message[i] = message[i] - key; //Decrypt input message & convert any lower case characters to uppercase
 			
 			if(message[i] < 'a') {
 				message[i] = message[i] + 'z' - 'a' + 1;
@@ -137,7 +153,7 @@ void rotationDecrypt(char* message, int key) {
 		}
 		
 		else if(message[i] >= 'A' && message[i] <= 'Z') {
-			message[i] = (message[i] - key) % 26;
+			message[i] = message[i] - key;
 			
 			if(message[i] < 'A') {
 				message[i] = message[i] + 'Z' - 'A' + 1;
@@ -147,7 +163,7 @@ void rotationDecrypt(char* message, int key) {
 	}
     printf("\n");
 }
-
+/*
 void bruteRotation(char* message, int key) {
     
     int i;
@@ -171,4 +187,58 @@ void bruteRotation(char* message, int key) {
 		}
     }
     printf("\nAll possible decryption keys processed.\n");
+}
+*/
+int f_index(char subkey[], char to_find) {
+    
+    int i;
+    
+    for(i = 0; i < 26; i++) {
+        if(subkey[i] == to_find) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+char* substitutionEncrypt(char* message, char subkey[]) {
+    
+    int i;
+    int length = strlen(message);
+    int e_index;
+    char *esub = (char *) malloc(sizeof(char)*length);
+    
+    for(i = 0; i < length; i++) {
+        e_index = toupper(message[i]) - 'A';
+        
+        if (e_index >= 0 && e_index < 26) {
+            esub[i] = subkey[e_index];
+        }
+        else {
+            esub[i] = message[i];
+        }
+    }
+    return esub;
+}
+
+char* substitutionDecrypt(char* message, char subkey[]) {
+    
+    int i;
+    int length = strlen(message);
+    int d_index;
+    int subkey_index;
+    char *dsub = (char *) malloc(sizeof(char)*length);
+    
+    for(i = 0; i < length; i++) {
+        d_index = toupper(message[i]) - 'A';
+        
+        if(d_index >= 0 && d_index < 26) {
+            subkey_index = f_index(subkey, toupper(message[i]));
+            dsub[i] = 'A' + subkey_index;
+        }
+        else {
+            dsub[i] = message[i];
+        }
+    }
+    return dsub;
 }
