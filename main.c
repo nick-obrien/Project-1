@@ -32,12 +32,13 @@ char* substitutionEncrypt(char* message, char subkey[]);
 char* substitutionDecrypt(char* message, char subkey[]);
 
 
-//main code goes here
-int main(void) {
+//----------------- User Friendly menu & Task selection -----------------
+int main() {
     
-    int operation, key; //declared integers for
-    char message[100]; //This is the array which holds the user's message to be used in the Cipher.
+    int operation, key; //declared integers for operation
+    char message[255]; //This is the array which holds the user's message to be used in the Cipher.
     //Alphabet -------- A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z
+    //Declaration of substitution key within its index.
     char subkey[26] = {'Z', 'A', 'Q', 'W', 'S', 'X', 'C', 'D', 'E', 'R', 'F', 'V', 'B', 'G', 'T', 'Y', 'H', 'N', 'M', 'J', 'U', 'I', 'K', 'L', 'O', 'P'};
     
     
@@ -45,10 +46,11 @@ int main(void) {
     fgets(message, sizeof(message), stdin); //Gets the user's text input and stores it in the message variable.
     
     printf("\nPlease choose from the following options:\n");
-    printf("1 = Encryt with the Rotation Cipher.\n");
+    printf("1 = Encrypt with the Rotation Cipher.\n");
     printf("2 = Decrypt with the Rotation Cipher.\n");
     printf("3 = Encrypt with the Substitution Cipher.\n");
     printf("4 = Decrypt with the Substitution Cipher.\n");
+    printf("\n5 = Use brute force Rotation Decryption.\n");
     printf("\nEnter a number to make your selection:\t");
     scanf("%d", &operation);
     fflush(stdin);
@@ -59,10 +61,8 @@ int main(void) {
         case 1: // Encryption with Rotation cipher
             fflush(stdin);
             printf("\nEncryption with Rotation Cipher selected.\n");
-            printf("Enter the Rotation Cipher Key (0-25):\t");
+            printf("Enter the Rotation Cipher Key (between 0-25):\t");
             scanf("%d", &key); 
-            fflush(stdin);
-            
             //Print the encyrpted text
             printf("\nEncrypted message: ");
             
@@ -72,10 +72,8 @@ int main(void) {
         case 2: // Decryption with Rotation cipher
             fflush(stdin);
             printf("\nDecryption with Rotation Cipher selected.\n");
-            printf("Enter the Rotation Cipher Key (0-25):\t");
+            printf("Enter the Rotation Cipher Key (between 0-25):\t");
             scanf("%d", &key);
-            fflush(stdin);
-            
             //print the decrypted text
             printf("\nDecrypted message: ");
             
@@ -94,17 +92,11 @@ int main(void) {
             printf("Decrypted Message: %s\n", dsub);
             break;
             
-        //case 5:
-        /*    
-        case 3: // Brute force rotation decryption
+        case 5:  // Brute force rotation decryption
             printf("\nBrute force Decryption selected.\n");
-            for(key = 1; key <= 26; key++) {
                 bruteRotation(message, key);
-                printf("Key: %d Decryption: %s \n", key, message);
-                //strcpy(message);
-            }
             break;
-         */   
+            
         default:
             printf("\nError incorrectly entered inputs.\n");
     }
@@ -116,17 +108,16 @@ void rotationEncrypt(char* message, int key) {
     int i; //integer variable to reference each character
     
     for(i = 0; message[i] != '\0'; ++i) {
+        message[i] = message[i];
         
-        
-        if(message[i] >= 'a' && message[i] <= 'z') {
-                message[i] = message[i] + key - 32; //Encrypt input message & convert any lower case characters to uppercase.
+        if(message[i] >= 'a' && message[i] <= 'z') { //Check that the given message is inbetween 'a' or 'z'
+                message[i] = toupper(message[i]) + key; //Encrypt input message & convert any lower case characters to uppercase.
             
-            if(message[i] > 'z') {
-                message[i] = message[i] - 'z' + 'a' - 1;
+            if(message[i] > 'Z') { // Subtract 
+                message[i] = message[i] - 'Z' + 'A' - 1;
             }
         }
-        
-        else if(message[i] >= 'A' && message[i] <= 'Z') {
+        else if(message[i] >= 'A' && message[i] <= 'Z') { //Check that the given message is inbetween 'A' or 'Z'
                 message[i] = message[i] + key;
         
             if(message[i] > 'Z') {
@@ -143,52 +134,52 @@ void rotationDecrypt(char* message, int key) {
     int i;
     
     for(i = 0; message[i] != '\0'; ++i) {
-		
-		if(message[i] >= 'a' && message[i] <= 'z') {
-			message[i] = message[i] - key; //Decrypt input message & convert any lower case characters to uppercase
-			
-			if(message[i] < 'a') {
-				message[i] = message[i] + 'z' - 'a' + 1;
-			}
-		}
-		
-		else if(message[i] >= 'A' && message[i] <= 'Z') {
-			message[i] = message[i] - key;
-			
-			if(message[i] < 'A') {
-				message[i] = message[i] + 'Z' - 'A' + 1;
-			}
-		}
-		printf("%c", message[i]);
-	}
+    		
+    	if(message[i] >= 'a' && message[i] <= 'z') {
+    		message[i] = toupper(message[i]) - key; //Decrypt input message & convert any lower case characters to uppercase
+    			
+    		if(message[i] < 'A') {
+    			message[i] = message[i] + 'Z' - 'A' + 1;
+    		}
+    	}	
+    	else if(message[i] >= 'A' && message[i] <= 'Z') {
+    		message[i] = message[i] - key;
+    			
+    		if(message[i] < 'A') {
+    			message[i] = message[i] + 'Z' - 'A' + 1;
+    		}
+    	}
+    	printf("%c", message[i]);
+    }
     printf("\n");
 }
-/*
+
 void bruteRotation(char* message, int key) {
     
     int i;
     
-    for(i = 0; message[i] != '\0'; ++i) {
-        
-        if(message[i] >= 'a' && message[i] <= 'z') {
-			message[i] = (message[i] - key) % 26 - 32; //Decrypt input message & convert any lower case characters to uppercase
-			
-			if(message[i] < 'a') {
-				message[i] = message[i] + 'z' - 'a' + 1;
-			}
-		}
-		
-		else if(message[i] >= 'A' && message[i] <= 'Z') {
-			message[i] = (message[i] - key) % 26;
-			
-			if(message[i] < 'A') {
-				message[i] = message[i] + 'Z' - 'A' + 1;
-			}
-		}
+    for(key = 0; key <= 25; key++) {
+        for(i = 0; i < strlen(message); ++i) {
+    		
+    		if(message[i] >= 'a' && message[i] <= 'z') {
+    			message[i] = toupper(message[i]) - key; //Decrypt input message & convert any lower case characters to uppercase
+    			
+    			if(message[i] < 'A') {
+    				message[i] = message[i] + 'Z' - 'A' + 1;
+    			}
+    		}
+    		else if(message[i] >= 'A' && message[i] <= 'Z') {
+    			message[i] = message[i] - key;
+    			
+    			if(message[i] < 'A') {
+    				message[i] = message[i] + 'Z' - 'A' + 1;
+    			}
+    		}
+    	}
+    	printf("Key: %d Decrypted Message: %s", key, message);
     }
-    printf("\nAll possible decryption keys processed.\n");
 }
-*/
+
 int f_index(char subkey[], char to_find) {
     
     int i;
